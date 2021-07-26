@@ -1,0 +1,52 @@
+--- 
+title: "yourTitle"
+author: "yourName"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+output:
+  bookdown::gitbook: 
+    config:
+      toc:
+        collapse: 2
+    toc_depth: 4
+    css: "style.css"
+    number_sections: true
+description: "notesGoHere"
+editor_options: 
+  chunk_output_type: console
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = TRUE,
+	warning = TRUE
+)
+```
+
+# 
+
+Save this file as index.Rmd
+
+Add the style.css file and bibliography.bib files to the directory hold with this file.  They can be found here: https://github.com/RaymondBalise/rUM/tree/master/inst/bookFiles.  Click the Raw button.  Use the file menu to save the file.  Be sure to keep the original names.
+
+```{r tidyverse, include=FALSE, message=FALSE}
+library(conflicted)
+conflict_prefer("filter", "dplyr", quiet = TRUE)
+conflict_prefer("lag", "dplyr", quiet = TRUE)
+suppressPackageStartupMessages(library(tidyverse))
+
+# suppress "`summarise()` has grouped output by " messages
+options(dplyr.summarise.inform=F)  
+```
+
+```{r tidymodels, include=FALSE}
+suppressPackageStartupMessages(library(tidymodels))
+tidymodels_prefer()
+suppressMessages(conflict_prefer("spec", "yardstick"))
+```
+
+
+# 
