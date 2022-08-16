@@ -1,7 +1,32 @@
+# rUM 1.0.1
+
++ Added https:\\ to github link in vignettes for CRAN
++ Removed `![rUM](package-logo.jpg){width=0.8in}` from vignette titles
++ Added "with R Markdown" to vignette title
+
+# rUM 1.0
+
+* Added quarto options in project creation template/wizard
+* Added quarto support for make_project
+* Added rStudio project files
+* Added check to make sure analysis does not exist - Thanks to Francisco Cardozo
+* Updated .gitignore
+* Added citation info to README
+* Added vignettes
+* Add more options to setup chunks
+* Removed `suppressMessages(conflict_prefer("spec", "yardstick"))` from R Markdown templates.  It is now in `tidymodels_prefer()`.
+* Add quarto to gitignore gist 
+* Add @importFrom bookdown, rmarkdown, table1 cran checks
+
+
+# rUM 0.3.2
+
+* Fixed package version for table1 to be `packageVersion("table1")` instead of `packageVersion("tidyverse")`
+
 # rUM 0.3.1
 
 * Fixed capitalization bug in `make_project()`.
-  * `packageVersion("rum")` is now `packageVersion("rUM")`
+* `packageVersion("rum")` is now `packageVersion("rUM")`
 
 # rUM 0.3.0
 
@@ -34,6 +59,5 @@
 * Added a `NEWS.md` file to track changes to the package
 * Added Website
 
-# rUM (development version)
 
 

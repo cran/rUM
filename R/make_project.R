@@ -1,102 +1,95 @@
 #' Make an Analysis Project
 #' 
 #' @description This function makes an R project that includes an analysis.Rmd 
-#' file with conflicted and tidyverse and an aggressive .gitignore.  The 
-#' .gitignore is designed to help protect against leaking data (with protected 
-#' health information). This function is used by the research_project.dcf file 
-#' to make the files.
-#'
+#' or analysis.qmd file using the conflicted and tidyverse packages.  This 
+#' project automatically includes an aggressive .gitignore which is designed to
+#' help protect against leaking data (with protected  health information), a 
+#' starter bibliography file called "references" (in standard .bib format), 
+#' and a stock Citation Style Language (.csl) file for the New England Journal 
+#' of Medicine.
+#' 
 #' @param path Path automatically set by research_project.dcf (see
 #'    \code{./rstudio/templates/project/})
+#' @param type Choose between "Quarto (analysis.qmd)" or 
+#'    "R Markdown (analysis.Rmd)"
 #'
-#' @import tidyverse 
-#' @import conflicted
+#' @details Behind the scenes, this function used by research_project.dcf when
+#' a user selects New project... > New Directory > rUM Research Project Template
+#' within the RSutdio IDE. See \code{./rstudio/templates/project/}.
+#'
+#' @importFrom tidyverse tidyverse_logo
+#' @importFrom conflicted conflict_prefer
+#' @importFrom bookdown html_document2
+#' @importFrom rmarkdown html_document
+#' @importFrom table1 t1kable
+#' @importFrom rlang abort
 #' @importFrom utils download.file
+#' @importFrom usethis create_project
 #'
-#' @return Creates a project directory with the following contents: a template
-#'    \code{.Rmd} file called "analysis", a subdirectory for data, a template
-#'    \code{.gitignore} with aggressive protections against publishing potential
-#'    protected health information, a starter bibliography file called 
-#'    "references" (in standard \code{.bib} format), and a stock Citation Style
-#'    Language (\code{.csl}) file for the New England Journal of Medicine.
+#' @return Returns nothing.  See description above.
 #'    
 #' @export
 #' 
 #' @examples 
 #' \dontrun{
-#'   make_project(path = "~/test_project")
+#'   make_project(path = "~/test_project", type = "Quarto (analysis.qmd)")
+#' }
+#' \dontrun{
+#'   make_project(path = "~/test_project", type = "R Markdown (analysis.Rmd)")
 #' }
 
-make_project <- function(path) {
+make_project <- function(
+    path,
+    type = c("Quarto (analysis.qmd)", "R Markdown (analysis.Rmd)")
+  ) {
   
+  type <- match.arg(type)
   # ensure path exists
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
   
-  # generate header
-  header <- c(
-    '---',
-    'title: "your_title_goes_here"',
-    'author: "your_name_goes_here"',
-    'date: "`r Sys.Date()`"',
-    'output:', 
-    '  bookdown::html_document2:',
-    '    number_sections: false',
-    'bibliography: [references.bib, packages.bib]',
-    'csl: the-new-england-journal-of-medicine.csl',
-    '---',
-    '',
-    '```{r setup, echo=FALSE}',
-    'knitr::opts_chunk$set(echo = FALSE)',
-    '```',
-    '',
-    '```{r tidyverse, echo=FALSE}',
-    'library(conflicted)',
-    'conflict_prefer("filter", "dplyr", quiet = TRUE)',
-    'conflict_prefer("lag", "dplyr", quiet = TRUE)',
-    'suppressPackageStartupMessages(library(tidyverse))',
-    '',
-    '# suppress "`summarise()` has grouped output by " messages',
-    'options(dplyr.summarise.inform=F) ', 
-    '```',
-    '',
-    '# Introduction',
-    '',
-    '# Method',
-    'Analyses were conducted with `r stringr::word(R.Version()$version.string, 1, 3)` with the `tidyverse` (`r packageVersion("tidyverse")`), `rUM` (`r packageVersion("rUM")`), `table1` (`r packageVersion("tidyverse")`) packages used to preprocess and summarize data.[@R-base; @R-tidyverse; @tidyverse2019; @R-rUM; @R-table1]',
-    '',
-    '# Results',
-    '',
-    '# Conclusion',
-    '',
-    '# References {-}',
-    '',
-    '```{r include=FALSE}',
-    '# automatically create a bib database for loaded R packages & rUM',
-    'knitr::write_bib(',
-    '  c(',
-    '    .packages(),',
-    '    "rUM",',
-    '    "table1"',
-    '  ),', 
-    '  "packages.bib"',
-    ')',
-    '```'
+  
+  # If the project object does not exist add it.
+  if (length(list.files(path = path, pattern = "\\.Rproj$")) == 0) {
+    usethis::create_project(path = path, open = TRUE, rstudio = TRUE)    
+  }
+
+  # Paths to gist files for analysis - these need to update of the gist changes.
+  gist_path_rmd <- paste0(
+    "https://gist.github.com/RaymondBalise/ef56efda4a9260d8415a2cde94cbad1b/",
+    "raw/15b7ef931468a2ae2c5af1fc30606449e4ae067a/analysis.Rmd"
+  )
+  gist_path_qmd <- paste0(
+    "https://gist.githubusercontent.com/RaymondBalise/",
+    "224f0b7b107a6b800c610d46c8b6f236/raw/",
+    "a19e4afec73c48c34821ff258f051107673f27c9/analysis.qmd"
   )
   
-  # collect into single text string
-  contents <- paste(
-    paste(header, collapse = "\n"),
-    sep = "\n"
-  )
+  # Prevent user from overwriting an analysis file
+  if (file.exists(paste0(path, "/analysis.Rmd")) | 
+      file.exists(paste0(path, "/analysis.qmd"))   
+  ) {
+    abort(
+      "The directory you choose already has an analysis file. Stopping."
+    )
+  } 
   
-  # write to index file
-  writeLines(contents, con = file.path(path, "analysis.Rmd"))
+  if (type == "R Markdown (analysis.Rmd)") {
+    download.file(gist_path_rmd, paste0(path, "/analysis.Rmd"))
+  } else if (type == "Quarto (analysis.qmd)") {
+    download.file(gist_path_qmd, paste0(path, "/analysis.qmd"))
+  } else {
+    abort(
+      "The type must be 'R Markdown (analysis.Rmd)' or 'Quarto (analysis.qmd)'"
+    )
+  }
+  
   dir.create(paste0(path, "/data"), recursive = TRUE, showWarnings = FALSE)
   
+  # Path to gitignore this must be updated if the gist changes.
   gist_path_ignore <- paste0(
     "https://gist.githubusercontent.com/RaymondBalise/",
     "300d99c2b6450feda3ed5a816f396191/raw/",
-    "a38f77aab743a2670dbb80ab0278b30745527243/.gitignore"
+    "b9ab7d1ecf503bad68a3f9cca98db397b7afd2b9/.gitignore"
   )
   download.file(gist_path_ignore, paste0(path, "/.gitignore"))
 
