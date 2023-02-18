@@ -1,3 +1,9 @@
+  <!-- badges: start -->
+  [![CRAN status](https://www.r-pkg.org/badges/version/rUM)](https://CRAN.R-project.org/package=rUM)
+  [![Lifecycle: stable](https://lifecycle.r-lib.org/articles/figures/lifecycle-stable.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+  [![CRAN downloads](https://cranlogs.r-pkg.org/badges/rUM)](https://www.r-pkg.org/pkg/rUM)
+  <!-- badges: end -->
+  
 # rUM <a href='https://raymondbalise.github.io/rUM/'><img src='man/figures/logo.png' align="right" width="139" /></a>
 This is a collection of R things from your friends at UM (The University of Miami).
 
@@ -6,11 +12,11 @@ rUM includes:
 + A research project template.  It creates a new RStudio project that has your choice of an `analysis.qmd` Quarto file or `analysis.Rmd` R markdown file with tidyverse and conflicted.
 + Quarto and R Markdown templates which include they YAML header and start up blocks that load the tidyverse and conflicted packages.
 
-The plan is to add UM thesis and dissertation Markdown templates.
+* 💥 NEW in Version 1.0.2 💥 We cleaned (i.e., linted and styled) the code and fixed a couple small formatting issues in the paper templates.  The automatically produced paper code should pass checks based on the [tidyverse style guide](https://style.tidyverse.org/).
 
 ## How to I add rUM?
 
-Modern version RStudio (v2022.07 or later) ships with Quarto; update to the most recent version of RStudio [here](https://www.rstudio.com/products/rstudio/download/). If you know what you are doing, you can install the latest version of Quarto directly from [here](https://quarto.org/docs/get-started/).
+Modern versions of the RStudio interface (v2022.07 or later) ships with Quarto; update to the most recent version of RStudio [here](https://posit.co/download/rstudio-desktop/). If you know what you are doing, you can install the latest version of Quarto directly from [here](https://quarto.org/docs/get-started/).
 
 Then you should run this in the console of RStudio:
 
