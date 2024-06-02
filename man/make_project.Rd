@@ -6,7 +6,11 @@
 \usage{
 make_project(
   path,
-  type = c("Quarto (analysis.qmd)", "R Markdown (analysis.Rmd)")
+  type = c("Quarto (analysis.qmd)", "R Markdown (analysis.Rmd)"),
+  example = FALSE,
+  vignette = FALSE,
+  overwrite = FALSE,
+  openInteractive = TRUE
 )
 }
 \arguments{
@@ -15,6 +19,18 @@ make_project(
 
 \item{type}{Choose between "Quarto (analysis.qmd)" or
 "R Markdown (analysis.Rmd)"}
+
+\item{example}{Will the analysis file include an example table/figure?}
+
+\item{vignette}{Will the analysis file be saved as a package vignette?}
+
+\item{overwrite}{Will an existing RStudio project be overwritten?  This is 
+needed for for Posit.Cloud.  You will be prompted to confirm this option.}
+
+\item{openInteractive}{Should this new project be opened in a new RStudio
+window? Defaults to \code{TRUE}. NOTE: this option exists to prevent 
+RStudio from opening two duplicate versions of the new project when
+this function is executed from RStudio menus. MODIFY WITH CAUTION.}
 }
 \value{
 Returns nothing.  See description above.
@@ -35,9 +51,14 @@ within the RSutdio IDE. See \code{./rstudio/templates/project/}.
 }
 \examples{
 \dontrun{
-  make_project(path = "~/test_project", type = "Quarto (analysis.qmd)")
-}
-\dontrun{
-  make_project(path = "~/test_project", type = "R Markdown (analysis.Rmd)")
+  # This makes a project with an example Quarto paper in the project's folder.
+  make_project(path = "~/test", type = "Quarto (analysis.qmd)", example = TRUE, vignette = TRUE)
+  # make_project() allows abbreviations on the project type: "Q" for Quarto or "R" for R Markdown
+  make_project(path = "~/test_project", "Q", TRUE, TRUE)
+  
+  # This makes a project with an example R Markdown paper in the project's folder.
+  make_project(path = "~/test", type = "R Markdown (analysis.Rmd)", example = TRUE, vignette = TRUE)
+  # This makes a project with an example paper in the project's folder.
+  make_project(path = "~/test_project", "R", example = TRUE)
 }
 }
