@@ -11,13 +11,16 @@ csl: the-new-england-journal-of-medicine.csl
 
 ```{r setup, echo=FALSE}
 knitr::opts_chunk$set(
-                     ########## set global options ############
-    echo = FALSE,    # don't show code
-    collapse = TRUE, # keep code from blocks together (if shown)
-    message = TRUE,  # show messages
-    warning = TRUE,  # show warnings
-    error = TRUE,    # show error messages
-    comment = ""     # don't show ## with printed output
+                      ########## set global options ############
+    echo = FALSE,     # don't show code
+    collapse = TRUE,  # keep code from blocks together (if shown)
+    message = TRUE,   # show messages
+    warning = TRUE,   # show warnings
+    error = TRUE,     # show error messages
+    comment = "",     # don't show ## with printed output
+    dpi = 100,        # image resolution (typically 300 for publication)
+    fig.width = 6.5,  # figure width
+    fig.height = 4.0  # figure height
 )
 
 # R's default rounding is to show 7 digits. This rounds results to 3 digits.
@@ -38,17 +41,21 @@ options(dplyr.summarise.inform = FALSE)
 library(glue)  # for glue()
 library(rUM)  # needed for the bibliography to include the package
 library(rio)  # for import() 
-library(table1)  # for table1() if you want to use it instead of gtsummary
 
 # gtsummary for tbl_summary(), add_n(), add_p(), modify_header(), bold_labels()
 suppressPackageStartupMessages(library(gtsummary)) 
 ```
 
 ```{r load-data}
-# raw_data <- import("")  # your data file goes inside the ""
+# If you want to import a dataset which is not an R file, put its name inside 
+# the "" below.  For example:
+# raw_data <- import("the_excel.xlsx")
+
+# If your datasets is an Excel file saved in the data folder, add a path like:
+# raw_data <- import("data/the_excel.xlsx")
 ```
 
-```{r analysis-1}
+```{r make-analysis}
 # preprocess your data and ultimately make a dataset called analysis
 analysis <- mtcars |> 
   mutate(auto_man = if_else(am == 0, "Automatic", "Manual")) |> 
@@ -65,28 +72,17 @@ Analyses were conducted with `r stringr::word(R.Version()$version.string, 1, 3)`
 # Results
 
 ```{r table-1}
-
-# The table1::table1 does quick pretty descriptive tables but they don't support
-#   hyperlinks/cross-references in the paper
-#
-# analysis |> 
-#  select(everything()) |> # choose your variables here
-#  table1(
-#    # change auto_man to the name of your column variable or delete | auto_man
-#    ~ . | auto_man, 
-#    data = _
-#  ) 
-
+# To learn how to use tbl_summary look https://www.danieldsjoberg.com/gtsummary/
 analysis |> 
   tbl_summary(
     include = c(everything()), # choose your variables here
     # change auto_man to the name of your column variable or delete by = auto_man
     by = auto_man, # split table by group
     missing = "no" # don't list missing data separately
-  ) %>%
-  # add_n() %>% # add column with total number of non-missing observations
-  # add_p() %>% # test for a difference between groups
-  modify_header(label = "") %>% # update the column header to be blank
+  ) |>
+  # add_n() |> # add column with total number of non-missing observations
+  # add_p() |> # test for a difference between groups
+  modify_header(label = "") |> # update the column header to be blank
   bold_labels() |> 
   modify_caption(
     "Cross references to tables start with tab: then the code chunk label."
@@ -95,14 +91,18 @@ analysis |>
 
 As can be seen in Table \@ref(tab:table-1) or [Table 1](#tab:table-1)
 
-```{r}
-#| label: figure1
-#| fig.cap: "Remember figure references begin with #fig:"
+```{r figure1}
+#| fig.cap: "Your real caption belongs here.  Remember figure references begin with #fig:"
 
+# To learn how to use ggplot start here: https://ggplot2.tidyverse.org/#learning-ggplot2
 analysis |> 
-  ggplot(aes(x=mpg)) + 
-  geom_histogram(bins = 5) + 
-  facet_wrap(vars(auto_man), ncol = 1)
+  ggplot() +
+		labs(
+			title = "Your short title goes here.",
+			caption = "Your data sources/citation goes here."
+		) +
+		geom_blank()
+		# remove geom_blank() and add details here
 ```
 
 See Figure \@ref(fig:figure1) or [Figure 1](#fig:figure1)
@@ -112,7 +112,7 @@ See Figure \@ref(fig:figure1) or [Figure 1](#fig:figure1)
 
 # References {-}
 
-```{r include=FALSE}
+```{r, make-references, include=FALSE}
 # automatically create a bib database for loaded R packages & rUM
 knitr::write_bib(
   c(
